@@ -1,21 +1,21 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
+
+	"github.com/ab-amar/url-shortener/internal/handler"
 )
 
 func main() {
-
 	const port = "8080"
 	mux := http.NewServeMux()
-	mux.HandleFunc("/health", func(w http.ResponseWriter, req *http.Request) {
-		fmt.Fprintf(w, "Ok!")
-	})
+	mux.HandleFunc("/health", handler.HealthHandler)
 	server := http.Server{
 		Addr:    ":" + port,
 		Handler: mux,
 	}
 
-	server.ListenAndServe()
+	if err := server.ListenAndServe(); err != nil {
+		panic(err)
+	}
 }
