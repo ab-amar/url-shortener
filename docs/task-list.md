@@ -9,11 +9,11 @@
 7. Add a root endpoint to explain what the service is
 8. Introduce a dedicated server setup function to keep `main.go` small
 9. Add basic configuration for the server port
+10. Read configuration from environment variables
+11. Validate configuration at startup
 
 ................................................
 
-10. Read configuration from environment variables
-11. Validate configuration at startup
 12. Add graceful shutdown support
 13. Understand request lifecycle and `context.Context`
 14. Add a `POST /shorten` endpoint skeleton

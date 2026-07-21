@@ -8,8 +8,10 @@ import (
 )
 
 func main() {
-	conf := config.NewConfig()
-
+	conf, err := config.NewConfig()
+	if err != nil {
+		panic(err)
+	}
 	port := conf.Port
 	server := createServer(port)
 
