@@ -6,6 +6,8 @@ import (
 )
 
 func HealthHandler(w http.ResponseWriter, req *http.Request) {
+	ctx := req.Context()
+	_ = ctx
 	if req.Method != http.MethodGet {
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		return

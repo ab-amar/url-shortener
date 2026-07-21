@@ -11,11 +11,11 @@
 9. Add basic configuration for the server port
 10. Read configuration from environment variables
 11. Validate configuration at startup
+12. Add graceful shutdown support
+13. Understand request lifecycle and `context.Context`
 
 ................................................
 
-12. Add graceful shutdown support
-13. Understand request lifecycle and `context.Context`
 14. Add a `POST /shorten` endpoint skeleton
 15. Learn JSON decoding with `encoding/json`
 16. Define request and response structs for shortening
