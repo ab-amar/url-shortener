@@ -5,11 +5,13 @@
 3. Add method checking to `/health`
 4. Set explicit response headers and status code in `/health`
 5. Handle `ListenAndServe()` errors properly
-
 6. Run `gofmt` and learn standard Go formatting
 7. Add a root endpoint to explain what the service is
 8. Introduce a dedicated server setup function to keep `main.go` small
 9. Add basic configuration for the server port
+
+................................................
+
 10. Read configuration from environment variables
 11. Validate configuration at startup
 12. Add graceful shutdown support
