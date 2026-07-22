@@ -5,7 +5,13 @@ import (
 	"time"
 )
 
-func Shorten(originalURL string) model.URL {
+type URLService interface {
+	Shorten(originalURL string) model.URL
+}
+
+type ShortenerService struct{}
+
+func (s ShortenerService) Shorten(originalURL string) model.URL {
 	shortenedURL := model.URL{
 		OriginalURL: originalURL,
 		ShortCode: "short code",

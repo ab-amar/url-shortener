@@ -42,8 +42,8 @@ func ShortenHandler(w http.ResponseWriter, req *http.Request) {
 		http.Error(w,"Bad request", http.StatusBadRequest)
 		return
 	}
-
-	urlModel := service.Shorten(urlString)
+	var shortenerService service.URLService = service.ShortenerService{}
+	urlModel := shortenerService.Shorten(urlString)
 	respBody := shortenResponse{
 		Message: "Will shorten json",
 		URLModel: urlModel,
