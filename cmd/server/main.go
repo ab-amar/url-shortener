@@ -40,6 +40,7 @@ func createServer(port string) http.Server {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", handler.RootHandler)
 	mux.HandleFunc("/health", handler.HealthHandler)
+	mux.HandleFunc("/shorten", handler.ShortenHandler)
 	server := http.Server{
 		Addr:    ":" + port,
 		Handler: mux,
