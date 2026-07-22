@@ -8,6 +8,7 @@ import (
 	"strings"
 	"github.com/ab-amar/url-shortener/internal/service"
 	"github.com/ab-amar/url-shortener/internal/model"
+	"github.com/ab-amar/url-shortener/internal/repository"
 )
 
 type shortenRequest struct {
@@ -42,7 +43,11 @@ func ShortenHandler(w http.ResponseWriter, req *http.Request) {
 		http.Error(w,"Bad request", http.StatusBadRequest)
 		return
 	}
-	var shortenerService service.URLService = service.ShortenerService{}
+	var inMemoryRepository repository.UrlRepository = &repository.InMemoryRepository{}
+	var shortenerService service.URLService = service.ShortenerService{
+		URLRepo: inMemoryRepository,
+	}
+	
 	urlModel := shortenerService.Shorten(urlString)
 	respBody := shortenResponse{
 		Message: "Will shorten json",

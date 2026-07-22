@@ -21,10 +21,10 @@
 19. Define the core URL model in `internal/model`
 20. Move shortening logic into `internal/service`
 21. Design a service interface and discuss why interfaces matter
+22. Add an in-memory repository implementation
 
 ................................................
 
-22. Add an in-memory repository implementation
 23. Define a repository interface in `internal/repository`
 24. Wire handler -> service -> repository dependencies
 25. Generate short codes with a simple deterministic approach
