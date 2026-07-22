@@ -3,7 +3,9 @@ package handler
 import (
 	"fmt"
 	"net/http"
+	"net/url"
 	"encoding/json"
+	"strings"
 )
 
 type shortenRequest struct {
@@ -27,7 +29,16 @@ func ShortenHandler(w http.ResponseWriter, req *http.Request) {
 		http.Error(w,"Bad request", http.StatusBadRequest)
 		return
 	}
-
+	urlString := strings.TrimSpace(reqBody.URL)
+	if urlString == "" {
+		http.Error(w,"Bad request", http.StatusBadRequest)
+		return
+	}
+	
+	if parsedUrl, err := url.Parse(urlString); err != nil || parsedUrl.Scheme == "" || parsedUrl.Host == ""{
+		http.Error(w,"Bad request", http.StatusBadRequest)
+		return
+	}
 	respBody := shortenResponse{
 		Message: "Will shorten json",
 	}

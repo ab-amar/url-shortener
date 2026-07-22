@@ -16,11 +16,11 @@
 14. Add a `POST /shorten` endpoint skeleton
 15. Learn JSON decoding with `encoding/json`
 16. Define request and response structs for shortening
+17. Add input validation for the original URL
+18. Learn URL parsing with `net/url`
 
 ................................................
 
-17. Add input validation for the original URL
-18. Learn URL parsing with `net/url`
 19. Define the core URL model in `internal/model`
 20. Move shortening logic into `internal/service`
 21. Design a service interface and discuss why interfaces matter
