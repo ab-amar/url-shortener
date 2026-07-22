@@ -6,6 +6,8 @@ import (
 	"net/url"
 	"encoding/json"
 	"strings"
+	"github.com/ab-amar/url-shortener/internal/service"
+	"github.com/ab-amar/url-shortener/internal/model"
 )
 
 type shortenRequest struct {
@@ -14,6 +16,7 @@ type shortenRequest struct {
 
 type shortenResponse struct {
 	Message string `json:"message"`
+	URLModel model.URL `json:"urlModel"`
 }
 
 
@@ -35,12 +38,15 @@ func ShortenHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	
-	if parsedUrl, err := url.Parse(urlString); err != nil || parsedUrl.Scheme == "" || parsedUrl.Host == ""{
+	if parsedUrl, err := url.Parse(urlString); err != nil || parsedUrl.Scheme == "" || parsedUrl.Host == "" {
 		http.Error(w,"Bad request", http.StatusBadRequest)
 		return
 	}
+
+	urlModel := service.Shorten(urlString)
 	respBody := shortenResponse{
 		Message: "Will shorten json",
+		URLModel: urlModel,
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
