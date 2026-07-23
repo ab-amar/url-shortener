@@ -24,10 +24,10 @@
 22. Add an in-memory repository implementation
 23. Define a repository interface in `internal/repository`
 24. Wire handler -> service -> repository dependencies
+25. Generate short codes with a simple deterministic approach
 
 ................................................
 
-25. Generate short codes with a simple deterministic approach
 26. Discuss collision risk and improve short code generation
 27. Add a `GET /{code}` redirect flow using standard library routing constraints
 28. Learn why dynamic path routing gets awkward in `net/http`
