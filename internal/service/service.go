@@ -21,7 +21,7 @@ func (s ShortenerService) Shorten(originalURL string) model.URL {
 	hexString := hex.EncodeToString(hash[:])
 	shortenedURL := model.URL{
 		OriginalURL: originalURL,
-		ShortCode: hexString[:6],
+		ShortCode: hexString[:8],
 		CreatedAt: time.Now(),
 	}
 	s.URLRepo.SaveURL(shortenedURL)
