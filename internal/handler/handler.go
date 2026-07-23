@@ -8,8 +8,17 @@ import (
 	"strings"
 	"github.com/ab-amar/url-shortener/internal/service"
 	"github.com/ab-amar/url-shortener/internal/model"
-	"github.com/ab-amar/url-shortener/internal/repository"
 )
+
+type Handler struct {
+	URLService service.URLService
+}
+
+func New(urlService service.URLService) Handler {
+	return Handler{
+		URLService: urlService,
+	}
+}
 
 type shortenRequest struct {
 	URL string `json:"url"`
@@ -21,7 +30,7 @@ type shortenResponse struct {
 }
 
 
-func ShortenHandler(w http.ResponseWriter, req *http.Request) {
+func (h Handler) ShortenHandler(w http.ResponseWriter, req *http.Request) {
 	if req.Method != http.MethodPost {
 		http.Error(w,"method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -43,12 +52,8 @@ func ShortenHandler(w http.ResponseWriter, req *http.Request) {
 		http.Error(w,"Bad request", http.StatusBadRequest)
 		return
 	}
-	var inMemoryRepository repository.UrlRepository = &repository.InMemoryRepository{}
-	var shortenerService service.URLService = service.ShortenerService{
-		URLRepo: inMemoryRepository,
-	}
 	
-	urlModel := shortenerService.Shorten(urlString)
+	urlModel := h.URLService.Shorten(urlString)
 	respBody := shortenResponse{
 		Message: "Will shorten json",
 		URLModel: urlModel,

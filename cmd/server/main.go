@@ -8,6 +8,8 @@ import (
 	"time"
 	"github.com/ab-amar/url-shortener/internal/handler"
 	"github.com/ab-amar/url-shortener/internal/config"
+	"github.com/ab-amar/url-shortener/internal/repository"
+	"github.com/ab-amar/url-shortener/internal/service"
 )
 
 func main() {
@@ -16,7 +18,12 @@ func main() {
 		panic(err)
 	}
 	port := conf.Port
-	server := createServer(port)
+	var inMemoryRepository repository.URLRepository = &repository.InMemoryRepository{}
+	var shortenerService service.URLService = service.ShortenerService{
+		URLRepo: inMemoryRepository,
+	}
+	var h handler.Handler = handler.New(shortenerService)
+	server := createServer(port, h)
 
 	go func() {
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
@@ -35,12 +42,12 @@ func main() {
 	}
 }
 
-func createServer(port string) http.Server {
+func createServer(port string, h handler.Handler) http.Server {
 	
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", handler.RootHandler)
 	mux.HandleFunc("/health", handler.HealthHandler)
-	mux.HandleFunc("/shorten", handler.ShortenHandler)
+	mux.HandleFunc("/shorten", h.ShortenHandler)
 	server := http.Server{
 		Addr:    ":" + port,
 		Handler: mux,
