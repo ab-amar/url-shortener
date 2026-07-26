@@ -1,13 +1,14 @@
 package main
 
 import (
+	"context"
 	"net/http"
 	"os"
 	"os/signal"
-	"context"
 	"time"
-	"github.com/ab-amar/url-shortener/internal/handler"
+
 	"github.com/ab-amar/url-shortener/internal/config"
+	"github.com/ab-amar/url-shortener/internal/handler"
 	"github.com/ab-amar/url-shortener/internal/repository"
 	"github.com/ab-amar/url-shortener/internal/service"
 )
@@ -43,9 +44,9 @@ func main() {
 }
 
 func createServer(port string, h handler.Handler) http.Server {
-	
+
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", handler.RootHandler)
+	mux.HandleFunc("/", h.DefaultHandler)
 	mux.HandleFunc("/health", handler.HealthHandler)
 	mux.HandleFunc("/shorten", h.ShortenHandler)
 	server := http.Server{

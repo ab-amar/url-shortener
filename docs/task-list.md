@@ -26,10 +26,10 @@
 24. Wire handler -> service -> repository dependencies
 25. Generate short codes with a simple deterministic approach
 26. Discuss collision risk and improve short code generation
+27. Add a `GET /{code}` redirect flow using standard library routing constraints
 
 ................................................
 
-27. Add a `GET /{code}` redirect flow using standard library routing constraints
 28. Learn why dynamic path routing gets awkward in `net/http`
 29. Decide when a third-party router becomes justified
 30. Return correct redirect status codes and `Location` header
