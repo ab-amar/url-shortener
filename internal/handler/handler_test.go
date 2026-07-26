@@ -6,30 +6,57 @@ import (
 	"testing"
 )
 
-func TestHealthHandler_Get(t *testing.T) {
-	req := httptest.NewRequest(http.MethodGet, "/health", nil)
-	resp := httptest.NewRecorder()
-	HealthHandler(resp, req)
-
-	if resp.Code != http.StatusOK {
-		t.Fatalf("Expected staus %d, got %d", http.StatusOK, resp.Code)
+func TestHealthHandler(t *testing.T) {
+	tests := []struct {
+		name                string
+		method              string
+		expectedStatus      int
+		expectedBody        string
+		expectedContentType string
+	}{
+		{
+			name:                "Get",
+			method:              http.MethodGet,
+			expectedStatus:      http.StatusOK,
+			expectedBody:        "Ok!",
+			expectedContentType: "text/plain",
+		},
+		{
+			name:                "Post",
+			method:              http.MethodPost,
+			expectedStatus:      http.StatusMethodNotAllowed,
+			expectedBody:        "",
+			expectedContentType: "",
+		},
+		{
+			name:                "Put",
+			method:              http.MethodPut,
+			expectedStatus:      http.StatusMethodNotAllowed,
+			expectedBody:        "",
+			expectedContentType: "",
+		},
 	}
 
-	if resp.Body.String() != "Ok!" {
-		t.Fatalf("Did not get staus %s", "Ok!")
-	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			req := httptest.NewRequest(tt.method, "/health", nil)
+			resp := httptest.NewRecorder()
+			HealthHandler(resp, req)
 
-	if resp.Header().Get("Content-Type") != "text/plain" {
-		t.Fatalf("Did not get Content-Type %s", "text/plain")
-	}
-}
+			if resp.Code != tt.expectedStatus {
+				t.Fatalf("Expected status %d, got %d", tt.expectedStatus, resp.Code)
+			}
 
-func TestHealthHandler_MethodNotAllowed(t *testing.T) {
-	req := httptest.NewRequest(http.MethodPost, "/health", nil)
-	resp := httptest.NewRecorder()
-	HealthHandler(resp, req)
+			if tt.name == "Get" {
+				if resp.Body.String() != tt.expectedBody {
+					t.Fatalf("Did not get status %s", tt.expectedBody)
+				}
 
-	if resp.Code != http.StatusMethodNotAllowed {
-		t.Fatalf("Expected staus %d, got %d", http.StatusMethodNotAllowed, resp.Code)
+				if resp.Header().Get("Content-Type") != tt.expectedContentType {
+					t.Fatalf("Did not get Content-Type %s", tt.expectedContentType)
+				}
+			}
+
+		})
 	}
 }

@@ -31,11 +31,11 @@
 29. Decide when a third-party router becomes justified
 30. Introduce Chi and replace fallback `/` routing with explicit dynamic routes
 31. Return correct redirect status codes and `Location` header
- 
-................................................
-
 32. Add unit tests for the health handler
 33. Learn table-driven tests in Go
+
+................................................
+
 34. Add unit tests for the shorten handler
 35. Add unit tests for the service layer
 36. Add unit tests for the repository layer
