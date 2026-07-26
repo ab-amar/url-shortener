@@ -29,11 +29,11 @@
 27. Add a `GET /{code}` redirect flow using standard library routing constraints
 28. Learn why dynamic path routing gets awkward in `net/http`
 29. Decide when a third-party router becomes justified
+30. Introduce Chi and replace fallback `/` routing with explicit dynamic routes
+31. Return correct redirect status codes and `Location` header
  
 ................................................
 
-30. Introduce Chi and replace fallback `/` routing with explicit dynamic routes
-31. Return correct redirect status codes and `Location` header
 32. Add unit tests for the health handler
 33. Learn table-driven tests in Go
 34. Add unit tests for the shorten handler

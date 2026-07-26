@@ -11,6 +11,7 @@ import (
 	"github.com/ab-amar/url-shortener/internal/handler"
 	"github.com/ab-amar/url-shortener/internal/repository"
 	"github.com/ab-amar/url-shortener/internal/service"
+	"github.com/go-chi/chi/v5"
 )
 
 func main() {
@@ -45,13 +46,14 @@ func main() {
 
 func createServer(port string, h handler.Handler) http.Server {
 
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", h.DefaultHandler)
-	mux.HandleFunc("/health", handler.HealthHandler)
-	mux.HandleFunc("/shorten", h.ShortenHandler)
+	router := chi.NewRouter()
+	router.Get("/", h.RootHandler)
+	router.Get("/{code}", h.CodeHandler)
+	router.Get("/health", handler.HealthHandler)
+	router.Post("/shorten", h.ShortenHandler)
 	server := http.Server{
 		Addr:    ":" + port,
-		Handler: mux,
+		Handler: router,
 	}
 	return server
 }

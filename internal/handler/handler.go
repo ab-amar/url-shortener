@@ -9,6 +9,7 @@ import (
 
 	"github.com/ab-amar/url-shortener/internal/model"
 	"github.com/ab-amar/url-shortener/internal/service"
+	"github.com/go-chi/chi/v5"
 )
 
 type Handler struct {
@@ -78,7 +79,7 @@ func HealthHandler(w http.ResponseWriter, req *http.Request) {
 	fmt.Fprintf(w, "Ok!")
 }
 
-func RootHandler(w http.ResponseWriter, req *http.Request) {
+func (h Handler) RootHandler(w http.ResponseWriter, req *http.Request) {
 	if req.Method != http.MethodGet {
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -88,20 +89,12 @@ func RootHandler(w http.ResponseWriter, req *http.Request) {
 	fmt.Fprintf(w, "Shortens your URL!")
 }
 
-func (h Handler) DefaultHandler(w http.ResponseWriter, req *http.Request) {
-	if req.URL.Path == "/" {
-		RootHandler(w, req)
-		return
-	}
-	h.CodeHandler(w, req)
-}
-
 func (h Handler) CodeHandler(w http.ResponseWriter, req *http.Request) {
 	if req.Method != http.MethodGet {
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	code := strings.TrimPrefix(req.URL.Path, "/")
+	code := chi.URLParam(req, "code")
 	url, isFound := h.URLService.Resolve(code)
 	if isFound == false {
 		http.Error(w, "404", http.StatusNotFound)
