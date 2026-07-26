@@ -27,13 +27,13 @@
 25. Generate short codes with a simple deterministic approach
 26. Discuss collision risk and improve short code generation
 27. Add a `GET /{code}` redirect flow using standard library routing constraints
-
-................................................
-
 28. Learn why dynamic path routing gets awkward in `net/http`
 29. Decide when a third-party router becomes justified
 30. Return correct redirect status codes and `Location` header
 31. Add unit tests for the health handler
+
+................................................
+
 32. Learn table-driven tests in Go
 33. Add unit tests for the shorten handler
 34. Add unit tests for the service layer
