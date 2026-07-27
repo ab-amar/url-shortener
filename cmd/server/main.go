@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
@@ -27,8 +28,10 @@ func main() {
 	var h handler.Handler = handler.New(shortenerService)
 	server := createServer(port, h)
 
+	slog.Info("server starting", "port", port)
 	go func() {
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			slog.Error("server failed", "error", err)
 			panic(err)
 		}
 	}()
@@ -36,12 +39,14 @@ func main() {
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, os.Interrupt)
 	<-sigChan
-
+	slog.Info("shutdown signal received")
 	ctx, cancel := context.WithTimeout(context.Background(), 500*time.Millisecond)
 	defer cancel()
 	if err := server.Shutdown(ctx); err != nil {
+		slog.Error("server shutdown failed", "error", err)
 		panic(err)
 	}
+	slog.Info("server stopped")
 }
 
 func createServer(port string, h handler.Handler) http.Server {
