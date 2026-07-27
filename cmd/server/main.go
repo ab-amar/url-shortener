@@ -55,6 +55,7 @@ func createServer(port string, h handler.Handler) http.Server {
 	router := chi.NewRouter()
 	router.Use(middleware.RecoveryMiddleware)
 	router.Use(middleware.AppHeaderMiddleware)
+	router.Use(middleware.RequestIDMiddleware)
 	router.Use(middleware.LoggingMiddleware)
 	router.Get("/", h.RootHandler)
 	router.Get("/{code}", h.CodeHandler)

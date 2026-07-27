@@ -1,10 +1,20 @@
 package middleware
 
 import (
+	"context"
 	"encoding/json"
 	"log/slog"
 	"net/http"
+	"strconv"
+	"time"
 )
+
+func AppHeaderMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		w.Header().Set("X-App-Name", "url-shortener")
+		next.ServeHTTP(w, req)
+	})
+}
 
 type statusRecorder struct {
 	http.ResponseWriter
@@ -14,6 +24,23 @@ type statusRecorder struct {
 func (r *statusRecorder) WriteHeader(code int) {
 	r.statusCode = code
 	r.ResponseWriter.WriteHeader(code)
+}
+
+func LoggingMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		recorder := &statusRecorder{
+			ResponseWriter: w,
+			statusCode:     http.StatusOK,
+		}
+
+		next.ServeHTTP(recorder, req)
+		slog.Info("request completed",
+			"method", req.Method,
+			"path", req.URL.Path,
+			"status", recorder.statusCode,
+			"request_id", GetRequestID(req),
+		)
+	})
 }
 
 type errorResponse struct {
@@ -34,25 +61,27 @@ func RecoveryMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-func AppHeaderMiddleware(next http.Handler) http.Handler {
+type contextKey string
+
+const requestIDKey contextKey = "request_id"
+
+func RequestIDMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		w.Header().Set("X-App-Name", "url-shortener")
+		reqID := strconv.FormatInt(time.Now().UnixNano(), 10)
+		w.Header().Set("X-Request-ID", reqID)
+		ctx := context.WithValue(req.Context(), requestIDKey, reqID)
+		req = req.WithContext(ctx)
+
 		next.ServeHTTP(w, req)
 	})
 }
 
-func LoggingMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		recorder := &statusRecorder{
-			ResponseWriter: w,
-			statusCode:     http.StatusOK,
-		}
+func GetRequestID(req *http.Request) string {
+	value := req.Context().Value(requestIDKey)
+	reqID, ok := value.(string)
 
-		next.ServeHTTP(recorder, req)
-		slog.Info("request completed",
-			"method", req.Method,
-			"path", req.URL.Path,
-			"status", recorder.statusCode,
-		)
-	})
+	if !ok {
+		return ""
+	}
+	return reqID
 }
