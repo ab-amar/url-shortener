@@ -1,12 +1,15 @@
 package handler
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 
 	"github.com/ab-amar/url-shortener/internal/model"
+	"github.com/go-chi/chi/v5"
+	"github.com/stretchr/testify/assert"
 )
 
 type fakeURLService struct{}
@@ -43,32 +46,32 @@ func TestShortenHandler(t *testing.T) {
 			expectedContentType: "application/json",
 		},
 		{
-			name:                "Get sot allowed",
+			name:                "Get not allowed",
 			method:              http.MethodGet,
 			expectedStatus:      http.StatusMethodNotAllowed,
 			reqBodyString:       `{"url":"https://example.com"}`,
-			expectedContentType: "",
+			expectedContentType: "application/json",
 		},
 		{
 			name:                "Bad url",
 			method:              http.MethodPost,
 			expectedStatus:      http.StatusBadRequest,
 			reqBodyString:       `{"url":"https//example.com"}`,
-			expectedContentType: "",
+			expectedContentType: "application/json",
 		},
 		{
 			name:                "Empty url",
 			method:              http.MethodPost,
 			expectedStatus:      http.StatusBadRequest,
 			reqBodyString:       `{"url":""}`,
-			expectedContentType: "",
+			expectedContentType: "application/json",
 		},
 		{
 			name:                "Bad req body",
 			method:              http.MethodPost,
 			expectedStatus:      http.StatusBadRequest,
 			reqBodyString:       `{"url":""`,
-			expectedContentType: "",
+			expectedContentType: "application/json",
 		},
 	}
 
@@ -85,11 +88,10 @@ func TestShortenHandler(t *testing.T) {
 				t.Fatalf("Expected status %d, got %d", tt.expectedStatus, resp.Code)
 			}
 
-			if resp.Code == http.StatusOK {
-				if resp.Header().Get("Content-Type") != tt.expectedContentType {
-					t.Fatalf("Did not get Content-Type %s", tt.expectedContentType)
-				}
+			if resp.Header().Get("Content-Type") != tt.expectedContentType {
+				t.Fatalf("Did not get Content-Type %s", tt.expectedContentType)
 			}
+
 		})
 	}
 }
@@ -146,4 +148,29 @@ func TestHealthHandler(t *testing.T) {
 
 		})
 	}
+}
+
+type fakeNotFoundURLService struct{}
+
+func (s fakeNotFoundURLService) Shorten(originalURL string) model.URL {
+	return model.URL{}
+}
+
+func (s fakeNotFoundURLService) Resolve(code string) (model.URL, bool) {
+	return model.URL{}, false
+}
+func TestCodeHandler(t *testing.T) {
+	target := "/abcd1235"
+	h := New(fakeNotFoundURLService{})
+
+	rctx := chi.NewRouteContext()
+	rctx.URLParams.Add("code", "abcd1235")
+	req := httptest.NewRequest(http.MethodGet, target, nil)
+	req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, rctx))
+
+	resp := httptest.NewRecorder()
+	h.CodeHandler(resp, req)
+	assert.Equal(t, http.StatusNotFound, resp.Code)
+	assert.Equal(t, "application/json", resp.Header().Get("Content-Type"))
+
 }

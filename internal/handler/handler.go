@@ -31,26 +31,38 @@ type shortenResponse struct {
 	URLModel model.URL `json:"urlModel"`
 }
 
+type errorResponse struct {
+	Error string `json:"error"`
+}
+
 func (h Handler) ShortenHandler(w http.ResponseWriter, req *http.Request) {
 	if req.Method != http.MethodPost {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		json.NewEncoder(w).Encode(errorResponse{Error: "method not allowed"})
 		return
 	}
 
 	dec := json.NewDecoder(req.Body)
 	var reqBody shortenRequest
 	if err := dec.Decode(&reqBody); err != nil {
-		http.Error(w, "Bad request", http.StatusBadRequest)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(errorResponse{Error: "bad request"})
 		return
 	}
 	urlString := strings.TrimSpace(reqBody.URL)
 	if urlString == "" {
-		http.Error(w, "Bad request", http.StatusBadRequest)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(errorResponse{Error: "bad request"})
 		return
 	}
 
 	if parsedUrl, err := url.Parse(urlString); err != nil || parsedUrl.Scheme == "" || parsedUrl.Host == "" {
-		http.Error(w, "Bad request", http.StatusBadRequest)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(errorResponse{Error: "bad request"})
 		return
 	}
 
@@ -62,7 +74,9 @@ func (h Handler) ShortenHandler(w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(&respBody); err != nil {
-		http.Error(w, "Bad response", http.StatusInternalServerError)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(errorResponse{Error: "internal server error"})
 		return
 	}
 }
@@ -91,13 +105,17 @@ func (h Handler) RootHandler(w http.ResponseWriter, req *http.Request) {
 
 func (h Handler) CodeHandler(w http.ResponseWriter, req *http.Request) {
 	if req.Method != http.MethodGet {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		json.NewEncoder(w).Encode(errorResponse{Error: "method not allowed"})
 		return
 	}
 	code := chi.URLParam(req, "code")
 	url, isFound := h.URLService.Resolve(code)
 	if isFound == false {
-		http.Error(w, "404", http.StatusNotFound)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusNotFound)
+		json.NewEncoder(w).Encode(errorResponse{Error: "not found"})
 		return
 	}
 	http.Redirect(w, req, url.OriginalURL, http.StatusFound)
