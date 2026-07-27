@@ -50,10 +50,10 @@
 48. Add basic health vs readiness endpoint distinction
 49. Add persistent storage design discussion
 50. Introduce PostgreSQL concepts before implementation
+51. Design the first database schema for shortened URLs
 
 ................................................
 
-51. Design the first database schema for shortened URLs
 52. Discuss primary keys, unique constraints, and indexes
 53. Add SQL migrations strategy
 54. Add a PostgreSQL repository implementation
