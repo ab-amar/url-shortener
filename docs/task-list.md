@@ -45,10 +45,10 @@
 43. Introduce middleware chaining
 44. Add panic recovery middleware
 45. Add request IDs
+46. Add timeout handling at the server level
 
 ................................................
 
-46. Add timeout handling at the server level
 47. Discuss server timeouts: read, write, idle, header
 48. Add basic health vs readiness endpoint distinction
 49. Add persistent storage design discussion

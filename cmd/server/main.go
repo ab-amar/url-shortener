@@ -62,8 +62,11 @@ func createServer(port string, h handler.Handler) http.Server {
 	router.Get("/health", handler.HealthHandler)
 	router.Post("/shorten", h.ShortenHandler)
 	server := http.Server{
-		Addr:    ":" + port,
-		Handler: router,
+		Addr:         ":" + port,
+		Handler:      router,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
+		IdleTimeout:  30 * time.Second,
 	}
 	return server
 }
