@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/ab-amar/url-shortener/internal/model"
+	"github.com/stretchr/testify/assert"
 )
 
 type fakeRepository struct {
@@ -41,23 +42,11 @@ func TestShortenerService_ResolveFound(t *testing.T) {
 
 	result, found := s.Resolve(code)
 
-	if !f.findByCodeCalled {
-		t.Fatalf(" findByCodeCalled not called")
-	}
-	if result.OriginalURL != f.findResult.OriginalURL {
-		t.Fatalf("wrong original url")
-	}
-
-	if result.ShortCode != f.findResult.ShortCode {
-		t.Fatalf("wrong short code")
-	}
-	if f.requestedCode != code {
-		t.Fatalf("Wrong code")
-	}
-
-	if f.findFound != found {
-		t.Fatalf("Wrong found")
-	}
+	assert.True(t, f.findByCodeCalled)
+	assert.Equal(t, code, f.requestedCode)
+	assert.Equal(t, f.findResult.OriginalURL, result.OriginalURL)
+	assert.Equal(t, f.findResult.ShortCode, result.ShortCode)
+	assert.Equal(t, f.findFound, found)
 }
 
 func TestShortenerService_ResolveNotFound(t *testing.T) {
@@ -72,16 +61,9 @@ func TestShortenerService_ResolveNotFound(t *testing.T) {
 
 	_, found := s.Resolve(code)
 
-	if !f.findByCodeCalled {
-		t.Fatalf(" findByCodeCalled not called")
-	}
-	if found {
-		t.Fatalf("Wrong found")
-	}
-
-	if f.requestedCode != code {
-		t.Fatalf("Wrong code")
-	}
+	assert.True(t, f.findByCodeCalled)
+	assert.False(t, found)
+	assert.Equal(t, code, f.requestedCode)
 }
 func TestShortenerService_Shorten(t *testing.T) {
 	originalURL := "https://example.com"
@@ -91,28 +73,11 @@ func TestShortenerService_Shorten(t *testing.T) {
 	}
 	result := s.Shorten(originalURL)
 
-	if result.OriginalURL != originalURL {
-		t.Fatalf("Wrong original url")
-	}
-
-	if result.ShortCode == "" {
-		t.Fatalf("Empty short code")
-	}
-
-	if result.CreatedAt.IsZero() {
-		t.Fatalf("Empty timestamp")
-	}
-
-	if !f.saveCalled {
-		t.Fatalf("Save not called")
-	}
-	if f.savedURL.OriginalURL != result.OriginalURL {
-		t.Fatalf("Saved url wrong")
-	}
-	if f.savedURL.ShortCode != result.ShortCode {
-		t.Fatalf("Saved code wrong")
-	}
-	if f.savedURL.CreatedAt != result.CreatedAt {
-		t.Fatalf("Created At wrong")
-	}
+	assert.Equal(t, originalURL, result.OriginalURL)
+	assert.NotEmpty(t, result.ShortCode)
+	assert.NotZero(t, result.CreatedAt)
+	assert.True(t, f.saveCalled)
+	assert.Equal(t, result.OriginalURL, f.savedURL.OriginalURL)
+	assert.Equal(t, result.ShortCode, f.savedURL.ShortCode)
+	assert.Equal(t, result.CreatedAt, f.savedURL.CreatedAt)
 }
