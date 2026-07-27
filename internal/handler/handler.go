@@ -78,6 +78,18 @@ func HealthHandler(w http.ResponseWriter, req *http.Request) {
 	fmt.Fprintf(w, "Ok!")
 }
 
+func ReadyHandler(w http.ResponseWriter, req *http.Request) {
+	ctx := req.Context()
+	_ = ctx
+	if req.Method != http.MethodGet {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	w.Header().Set("Content-Type", "text/plain")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "Ready!")
+}
+
 func (h Handler) RootHandler(w http.ResponseWriter, req *http.Request) {
 	if req.Method != http.MethodGet {
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
