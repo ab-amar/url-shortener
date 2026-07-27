@@ -39,10 +39,10 @@
 37. Learn how to use `httptest`
 38. Introduce `testify` after standard testing and `httptest`
 39. Improve error responses to be consistent
+40. Introduce a small response-writing helper
 
 ................................................
 
-40. Introduce a small response-writing helper
 41. Add structured logging with only standard library basics first
 42. Add request logging middleware
 43. Introduce middleware chaining
