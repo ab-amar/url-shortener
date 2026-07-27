@@ -33,10 +33,10 @@
 31. Return correct redirect status codes and `Location` header
 32. Add unit tests for the health handler
 33. Learn table-driven tests in Go
+34. Add unit tests for the shorten handler
 
 ................................................
 
-34. Add unit tests for the shorten handler
 35. Add unit tests for the service layer
 36. Add unit tests for the repository layer
 37. Learn how to use `httptest`
