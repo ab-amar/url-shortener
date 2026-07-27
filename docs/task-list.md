@@ -48,11 +48,11 @@
 46. Add timeout handling at the server level
 47. Discuss server timeouts: read, write, idle, header
 48. Add basic health vs readiness endpoint distinction
+49. Add persistent storage design discussion
+50. Introduce PostgreSQL concepts before implementation
 
 ................................................
 
-49. Add persistent storage design discussion
-50. Introduce PostgreSQL concepts before implementation
 51. Design the first database schema for shortened URLs
 52. Discuss primary keys, unique constraints, and indexes
 53. Add SQL migrations strategy
