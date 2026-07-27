@@ -10,6 +10,7 @@ import (
 
 	"github.com/ab-amar/url-shortener/internal/config"
 	"github.com/ab-amar/url-shortener/internal/handler"
+	"github.com/ab-amar/url-shortener/internal/middleware"
 	"github.com/ab-amar/url-shortener/internal/repository"
 	"github.com/ab-amar/url-shortener/internal/service"
 	"github.com/go-chi/chi/v5"
@@ -52,6 +53,7 @@ func main() {
 func createServer(port string, h handler.Handler) http.Server {
 
 	router := chi.NewRouter()
+	router.Use(middleware.LoggingMiddleware)
 	router.Get("/", h.RootHandler)
 	router.Get("/{code}", h.CodeHandler)
 	router.Get("/health", handler.HealthHandler)
