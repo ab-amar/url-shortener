@@ -14,6 +14,7 @@ import (
 	"github.com/ab-amar/url-shortener/internal/repository"
 	"github.com/ab-amar/url-shortener/internal/service"
 	"github.com/go-chi/chi/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 func main() {
@@ -28,7 +29,13 @@ func main() {
 	}
 	var h handler.Handler = handler.New(shortenerService)
 	server := createServer(port, h)
-
+	databaseURL := conf.DatabaseURL
+	pool, err := pgxpool.New(context.Background(), databaseURL)
+	if err != nil {
+		slog.Error("db failed", "error", err)
+		panic(err)
+	}
+	defer pool.Close()
 	slog.Info("server starting", "port", port)
 	go func() {
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {

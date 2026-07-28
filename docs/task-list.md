@@ -61,10 +61,10 @@
 59. Discuss TTL and expiry semantics
 60. Add analytics event model design
 61. Add PostgreSQL connection configuration
+62. Create a `pgxpool` connection pool in `main.go`
 
 ................................................
 
-62. Create a `pgxpool` connection pool in `main.go`
 63. Wire the app to use `PostgresRepository`
 64. Apply the initial migration to a local PostgreSQL instance
 65. Manually test shorten and redirect against a real PostgreSQL database
