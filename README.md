@@ -24,13 +24,8 @@ If PostgreSQL is not set up yet, follow [docs/postgres-local-setup.md](/Users/am
 From the project root:
 
 ```bash
-go test ./...
-```
-
-Set the required environment variable:
-
-```bash
 export DATABASE_URL="postgres://localhost:5432/url_shortener?sslmode=disable"
+go test ./...
 ```
 
 Optionally set the port:
@@ -71,6 +66,30 @@ curl -i http://localhost:8080/<short-code>
 
 For the full manual testing flow, use [docs/manual-postgres-testing.md](/Users/amarbehera/go/url-shortener/docs/manual-postgres-testing.md).
 
+## Automated Tests
+
+Run all tests:
+
+```bash
+export DATABASE_URL="postgres://localhost:5432/url_shortener?sslmode=disable"
+go test ./...
+```
+
+Run only HTTP router-level tests:
+
+```bash
+go test ./internal/handler
+```
+
+Run only PostgreSQL repository integration tests:
+
+```bash
+export DATABASE_URL="postgres://localhost:5432/url_shortener?sslmode=disable"
+go test ./internal/repository
+```
+
+The repository integration tests use a real PostgreSQL database and clear the `urls` table before and after each test.
+
 ## Database Migrations
 
 Apply migrations manually:
@@ -90,6 +109,8 @@ psql url_shortener -f migrations/000002_add_url_metadata_columns.up.sql
 
 - [docs/postgres-local-setup.md](/Users/amarbehera/go/url-shortener/docs/postgres-local-setup.md)
 - [docs/manual-postgres-testing.md](/Users/amarbehera/go/url-shortener/docs/manual-postgres-testing.md)
+- [docs/api.md](/Users/amarbehera/go/url-shortener/docs/api.md)
+- [docs/architecture.md](/Users/amarbehera/go/url-shortener/docs/architecture.md)
 - [docs/fundamentals.md](/Users/amarbehera/go/url-shortener/docs/fundamentals.md)
 - [docs/http-and-routing.md](/Users/amarbehera/go/url-shortener/docs/http-and-routing.md)
 - [docs/testing-notes.md](/Users/amarbehera/go/url-shortener/docs/testing-notes.md)

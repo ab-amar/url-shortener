@@ -12,6 +12,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func newTestRouter(h Handler) http.Handler {
+	router := chi.NewRouter()
+	router.Get("/{code}", h.CodeHandler)
+	router.Get("/health", HealthHandler)
+	router.Post("/shorten", h.ShortenHandler)
+	return router
+}
+
 type fakeURLService struct{}
 
 func (s fakeURLService) Shorten(originalURL string) (model.URL, error) {
@@ -229,4 +237,53 @@ func TestCodeHandler(t *testing.T) {
 	assert.Equal(t, http.StatusNotFound, resp.Code)
 	assert.Equal(t, "application/json", resp.Header().Get("Content-Type"))
 
+}
+
+func TestRouterHealthRoute(t *testing.T) {
+	h := New(fakeURLService{})
+	router := newTestRouter(h)
+	req := httptest.NewRequest(http.MethodGet, "/health", nil)
+	resp := httptest.NewRecorder()
+
+	router.ServeHTTP(resp, req)
+	assert.Equal(t, http.StatusOK, resp.Code)
+	assert.Equal(t, "Ok!", resp.Body.String())
+	assert.Equal(t, "text/plain", resp.Header().Get("Content-Type"))
+}
+
+func TestRouterShortenRoute(t *testing.T) {
+	h := New(fakeURLService{})
+	router := newTestRouter(h)
+	req := httptest.NewRequest(http.MethodPost, "/shorten", strings.NewReader(`{"url":"https://example.com"}`))
+	req.Header.Set("Content-Type", "application/json")
+	resp := httptest.NewRecorder()
+
+	router.ServeHTTP(resp, req)
+	assert.Equal(t, http.StatusOK, resp.Code)
+	assert.Equal(t, "application/json", resp.Header().Get("Content-Type"))
+	assert.Contains(t, resp.Body.String(), "https://example.com")
+}
+
+func TestRouterCodeRouteRedirect(t *testing.T) {
+	h := New(fakeURLService{})
+	router := newTestRouter(h)
+	req := httptest.NewRequest(http.MethodGet, "/abcd1001", nil)
+	resp := httptest.NewRecorder()
+
+	router.ServeHTTP(resp, req)
+	assert.Equal(t, http.StatusFound, resp.Code)
+	assert.Equal(t, "https://example.com", resp.Header().Get("Location"))
+	assert.Equal(t, "text/html; charset=utf-8", resp.Header().Get("Content-Type"))
+}
+
+func TestRouterCodeRouteNotFound(t *testing.T) {
+	h := New(fakeNotFoundURLService{})
+	router := newTestRouter(h)
+	req := httptest.NewRequest(http.MethodGet, "/doesnotexist", nil)
+	resp := httptest.NewRecorder()
+
+	router.ServeHTTP(resp, req)
+	assert.Equal(t, http.StatusNotFound, resp.Code)
+	assert.Equal(t, "application/json", resp.Header().Get("Content-Type"))
+	assert.Contains(t, resp.Body.String(), "not found")
 }

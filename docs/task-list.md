@@ -65,11 +65,11 @@
 63. Wire the app to use `PostgresRepository`
 64. Apply the initial migration to a local PostgreSQL instance
 65. Manually test shorten and redirect against a real PostgreSQL database
+66. Add integration tests for HTTP endpoints
+67. Add integration tests for repository behavior
 
 ................................................
 
-66. Add integration tests for HTTP endpoints
-67. Add integration tests for repository behavior
 68. Introduce Docker for local development
 69. Add Docker Compose for app + Postgres
 70. Add observability discussion: logs, metrics, traces
