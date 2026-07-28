@@ -67,24 +67,24 @@
 65. Manually test shorten and redirect against a real PostgreSQL database
 66. Add integration tests for HTTP endpoints
 67. Add integration tests for repository behavior
+68. Add GitHub Actions for formatting and tests
+69. Add API documentation
+70. Write a design doc for the project architecture
 
 ................................................
 
-68. Introduce Docker for local development
-69. Add Docker Compose for app + Postgres
-70. Add observability discussion: logs, metrics, traces
-71. Add basic metrics endpoint or counters
-72. Introduce Redis use cases before adding Redis
-73. Add a cache design discussion for redirect lookups
-74. Add Redis caching for hot short codes
-75. Discuss cache-aside and cache invalidation
-76. Add rate limiting design discussion
-77. Implement simple in-memory rate limiting
-78. Compare fixed window vs token bucket
-79. Discuss production deployment concerns
-80. Add GitHub Actions for formatting and tests
-81. Add API documentation
-82. Write a design doc for the project architecture
+71. Introduce Docker for local development
+72. Add Docker Compose for app + Postgres
+73. Add observability discussion: logs, metrics, traces
+74. Add basic metrics endpoint or counters
+75. Introduce Redis use cases before adding Redis
+76. Add a cache design discussion for redirect lookups
+77. Add Redis caching for hot short codes
+78. Discuss cache-aside and cache invalidation
+79. Add rate limiting design discussion
+80. Implement simple in-memory rate limiting
+81. Compare fixed window vs token bucket
+82. Discuss production deployment concerns
 83. Prepare interview talking points for each subsystem
 84. Track redirect counts in memory first
 85. Discuss race conditions and concurrent access
