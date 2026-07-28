@@ -21,10 +21,12 @@ type ShortenerService struct {
 func (s ShortenerService) Shorten(originalURL string) (model.URL, error) {
 	hash := sha256.Sum256([]byte(originalURL))
 	hexString := hex.EncodeToString(hash[:])
+	timeNow := time.Now()
 	shortenedURL := model.URL{
 		OriginalURL: originalURL,
 		ShortCode:   hexString[:8],
-		CreatedAt:   time.Now(),
+		CreatedAt:   timeNow,
+		UpdatedAt:   timeNow,
 	}
 	err := s.URLRepo.SaveURL(shortenedURL)
 	if err != nil {

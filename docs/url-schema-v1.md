@@ -30,6 +30,12 @@ It should be required because a short code without a destination is invalid.
 This stores when the short URL was created.
 It is useful for debugging, future analytics, expiry logic, and operational visibility.
 
+### `updated_at`
+
+This stores when the short URL row was last modified.
+It is useful for future schema evolution, admin operations, expiry updates, and general data hygiene.
+On initial insert, it should start with the same value as `created_at`.
+
 ## Why We Need `id`
 
 `short_code` is a business identifier, but `id` is a stable internal database identifier.
@@ -44,6 +50,6 @@ The database should enforce this rule, not only the application code.
 
 ## What We Are Not Adding Yet
 
-We are not adding `updated_at`, `expires_at`, `redirect_count`, `deleted_at`, or user-related fields yet.
+We are not adding `expires_at`, `redirect_count`, `deleted_at`, or user-related fields yet.
 Those fields are useful later, but they are not required for the current shorten and redirect flow.
-The first schema should stay minimal and correct.
+The schema is still being kept intentionally small while becoming more production-oriented.
