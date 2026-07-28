@@ -9,4 +9,5 @@ type URL struct {
 	ShortCode   string
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
+	ExpiresAt   *time.Time
 }

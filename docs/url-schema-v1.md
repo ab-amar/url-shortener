@@ -50,6 +50,6 @@ The database should enforce this rule, not only the application code.
 
 ## What We Are Not Adding Yet
 
-We are not adding `expires_at`, `redirect_count`, `deleted_at`, or user-related fields yet.
-Those fields are useful later, but they are not required for the current shorten and redirect flow.
+We are not adding `redirect_count`, `deleted_at`, or user-related fields yet.
+`expires_at` is now part of the evolving model design, but it is not fully enforced in application behavior yet.
 The schema is still being kept intentionally small while becoming more production-oriented.

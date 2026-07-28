@@ -57,11 +57,11 @@
 55. Compare in-memory vs PostgreSQL repository behavior
 56. Handle duplicate short code conflicts safely
 57. Add created-at and updated-at fields
+58. Add expiration support for links
+59. Discuss TTL and expiry semantics
 
 ................................................
 
-58. Add expiration support for links
-59. Discuss TTL and expiry semantics
 60. Add analytics event model design
 61. Add PostgreSQL connection configuration
 62. Create a `pgxpool` connection pool in `main.go`
