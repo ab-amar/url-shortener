@@ -72,11 +72,11 @@
 70. Write a design doc for the project architecture
 71. Introduce Docker for local development
 72. Add Docker Compose for app + Postgres
+73. Add observability discussion: logs, metrics, traces
+74. Add basic metrics endpoint or counters
 
 ................................................
 
-73. Add observability discussion: logs, metrics, traces
-74. Add basic metrics endpoint or counters
 75. Introduce Redis use cases before adding Redis
 76. Add a cache design discussion for redirect lookups
 77. Add Redis caching for hot short codes
@@ -99,4 +99,4 @@
 94. Add delete or disable short link capability
 95. Discuss soft delete vs hard delete
 96. Add linting after understanding what it catches
-97. Review tradeoffs and decide what makes the final project resume-worthy
+97. Review tradeoffs

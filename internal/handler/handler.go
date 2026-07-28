@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/ab-amar/url-shortener/internal/metrics"
 	"github.com/ab-amar/url-shortener/internal/model"
 	"github.com/ab-amar/url-shortener/internal/service"
 	"github.com/go-chi/chi/v5"
@@ -14,11 +15,13 @@ import (
 
 type Handler struct {
 	URLService service.URLService
+	Metrics    *metrics.Metrics
 }
 
-func New(urlService service.URLService) Handler {
+func New(urlService service.URLService, appMetrics *metrics.Metrics) Handler {
 	return Handler{
 		URLService: urlService,
+		Metrics:    appMetrics,
 	}
 }
 
@@ -67,6 +70,7 @@ func (h Handler) ShortenHandler(w http.ResponseWriter, req *http.Request) {
 		Message:  "short URL created successfully",
 		URLModel: urlModel,
 	}
+	h.Metrics.IncShortenRequestsTotal()
 	writeJSON(w, http.StatusOK, &respBody)
 }
 
@@ -112,9 +116,11 @@ func (h Handler) CodeHandler(w http.ResponseWriter, req *http.Request) {
 	code := chi.URLParam(req, "code")
 	url, isFound := h.URLService.Resolve(code)
 	if isFound == false {
+		h.Metrics.IncNotFoundTotal()
 		writeJSON(w, http.StatusNotFound, errorResponse{Error: "not found"})
 		return
 	}
+	h.Metrics.IncRedirectRequestsTotal()
 	http.Redirect(w, req, url.OriginalURL, http.StatusFound)
 }
 

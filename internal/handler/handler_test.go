@@ -7,6 +7,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/ab-amar/url-shortener/internal/metrics"
 	"github.com/ab-amar/url-shortener/internal/model"
 	"github.com/go-chi/chi/v5"
 	"github.com/stretchr/testify/assert"
@@ -38,7 +39,7 @@ func (s fakeURLService) Resolve(code string) (model.URL, bool) {
 func TestShortenHandler(t *testing.T) {
 	target := "/shorten"
 
-	h := New(fakeURLService{})
+	h := New(fakeURLService{}, metrics.New())
 
 	tests := []struct {
 		name                string
@@ -225,7 +226,7 @@ func (s fakeNotFoundURLService) Resolve(code string) (model.URL, bool) {
 }
 func TestCodeHandler(t *testing.T) {
 	target := "/abcd1235"
-	h := New(fakeNotFoundURLService{})
+	h := New(fakeNotFoundURLService{}, metrics.New())
 
 	rctx := chi.NewRouteContext()
 	rctx.URLParams.Add("code", "abcd1235")
@@ -239,8 +240,53 @@ func TestCodeHandler(t *testing.T) {
 
 }
 
+func TestShortenHandlerIncrementsMetrics(t *testing.T) {
+	m := metrics.New()
+	h := New(fakeURLService{}, m)
+	req := httptest.NewRequest(http.MethodPost, "/shorten", strings.NewReader(`{"url":"https://example.com"}`))
+	req.Header.Set("Content-Type", "application/json")
+	resp := httptest.NewRecorder()
+
+	h.ShortenHandler(resp, req)
+
+	assert.Equal(t, http.StatusOK, resp.Code)
+	assert.Equal(t, int64(1), m.GetShortenRequestsTotal())
+}
+
+func TestCodeHandlerRedirectIncrementsMetrics(t *testing.T) {
+	m := metrics.New()
+	h := New(fakeURLService{}, m)
+
+	rctx := chi.NewRouteContext()
+	rctx.URLParams.Add("code", "abcd1001")
+	req := httptest.NewRequest(http.MethodGet, "/abcd1001", nil)
+	req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, rctx))
+	resp := httptest.NewRecorder()
+
+	h.CodeHandler(resp, req)
+
+	assert.Equal(t, http.StatusFound, resp.Code)
+	assert.Equal(t, int64(1), m.GetRedirectRequestsTotal())
+}
+
+func TestCodeHandlerNotFoundIncrementsMetrics(t *testing.T) {
+	m := metrics.New()
+	h := New(fakeNotFoundURLService{}, m)
+
+	rctx := chi.NewRouteContext()
+	rctx.URLParams.Add("code", "abcd1235")
+	req := httptest.NewRequest(http.MethodGet, "/abcd1235", nil)
+	req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, rctx))
+	resp := httptest.NewRecorder()
+
+	h.CodeHandler(resp, req)
+
+	assert.Equal(t, http.StatusNotFound, resp.Code)
+	assert.Equal(t, int64(1), m.GetNotFoundTotal())
+}
+
 func TestRouterHealthRoute(t *testing.T) {
-	h := New(fakeURLService{})
+	h := New(fakeURLService{}, metrics.New())
 	router := newTestRouter(h)
 	req := httptest.NewRequest(http.MethodGet, "/health", nil)
 	resp := httptest.NewRecorder()
@@ -252,7 +298,7 @@ func TestRouterHealthRoute(t *testing.T) {
 }
 
 func TestRouterShortenRoute(t *testing.T) {
-	h := New(fakeURLService{})
+	h := New(fakeURLService{}, metrics.New())
 	router := newTestRouter(h)
 	req := httptest.NewRequest(http.MethodPost, "/shorten", strings.NewReader(`{"url":"https://example.com"}`))
 	req.Header.Set("Content-Type", "application/json")
@@ -265,7 +311,7 @@ func TestRouterShortenRoute(t *testing.T) {
 }
 
 func TestRouterCodeRouteRedirect(t *testing.T) {
-	h := New(fakeURLService{})
+	h := New(fakeURLService{}, metrics.New())
 	router := newTestRouter(h)
 	req := httptest.NewRequest(http.MethodGet, "/abcd1001", nil)
 	resp := httptest.NewRecorder()
@@ -277,7 +323,7 @@ func TestRouterCodeRouteRedirect(t *testing.T) {
 }
 
 func TestRouterCodeRouteNotFound(t *testing.T) {
-	h := New(fakeNotFoundURLService{})
+	h := New(fakeNotFoundURLService{}, metrics.New())
 	router := newTestRouter(h)
 	req := httptest.NewRequest(http.MethodGet, "/doesnotexist", nil)
 	resp := httptest.NewRecorder()

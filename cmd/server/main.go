@@ -10,6 +10,7 @@ import (
 
 	"github.com/ab-amar/url-shortener/internal/config"
 	"github.com/ab-amar/url-shortener/internal/handler"
+	"github.com/ab-amar/url-shortener/internal/metrics"
 	"github.com/ab-amar/url-shortener/internal/middleware"
 	"github.com/ab-amar/url-shortener/internal/repository"
 	"github.com/ab-amar/url-shortener/internal/service"
@@ -29,13 +30,15 @@ func main() {
 		slog.Error("db failed", "error", err)
 		panic(err)
 	}
+	appMetrics := metrics.New()
+
 	pgRepo := repository.NewPostgresRepository(pool)
 	var postgresRepository repository.URLRepository = &pgRepo
 	var shortenerService service.URLService = service.ShortenerService{
 		URLRepo: postgresRepository,
 	}
-	var h handler.Handler = handler.New(shortenerService)
-	server := createServer(port, h)
+	var h handler.Handler = handler.New(shortenerService, appMetrics)
+	server := createServer(port, h, appMetrics)
 	defer pool.Close()
 	slog.Info("server starting", "port", port)
 	go func() {
@@ -58,12 +61,13 @@ func main() {
 	slog.Info("server stopped")
 }
 
-func createServer(port string, h handler.Handler) http.Server {
+func createServer(port string, h handler.Handler, appMetrics *metrics.Metrics) http.Server {
 
 	router := chi.NewRouter()
 	router.Use(middleware.RecoveryMiddleware)
 	router.Use(middleware.AppHeaderMiddleware)
 	router.Use(middleware.RequestIDMiddleware)
+	router.Use(middleware.MetricsMiddleware(appMetrics))
 	router.Use(middleware.LoggingMiddleware)
 	router.Get("/", h.RootHandler)
 	router.Get("/{code}", h.CodeHandler)

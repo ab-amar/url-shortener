@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/ab-amar/url-shortener/internal/metrics"
 )
 
 func AppHeaderMiddleware(next http.Handler) http.Handler {
@@ -84,4 +86,13 @@ func GetRequestID(req *http.Request) string {
 		return ""
 	}
 	return reqID
+}
+
+func MetricsMiddleware(m *metrics.Metrics) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+			m.IncRequestsTotal()
+			next.ServeHTTP(w, req)
+		})
+	}
 }
