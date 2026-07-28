@@ -5,7 +5,7 @@ import (
 )
 
 type URLRepository interface {
-	SaveURL(url model.URL)
+	SaveURL(url model.URL) error
 	FindByCode(code string) (model.URL, bool)
 }
 
@@ -13,8 +13,9 @@ type InMemoryRepository struct {
 	Urls []model.URL
 }
 
-func (r *InMemoryRepository) SaveURL(url model.URL) {
+func (r *InMemoryRepository) SaveURL(url model.URL) error {
 	r.Urls = append(r.Urls, url)
+	return nil
 }
 
 func (r *InMemoryRepository) FindByCode(code string) (model.URL, bool) {

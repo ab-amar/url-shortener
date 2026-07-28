@@ -14,11 +14,11 @@ import (
 
 type fakeURLService struct{}
 
-func (s fakeURLService) Shorten(originalURL string) model.URL {
+func (s fakeURLService) Shorten(originalURL string) (model.URL, error) {
 	return model.URL{
 		OriginalURL: originalURL,
 		ShortCode:   "abcd1001",
-	}
+	}, nil
 }
 
 func (s fakeURLService) Resolve(code string) (model.URL, bool) {
@@ -29,6 +29,7 @@ func (s fakeURLService) Resolve(code string) (model.URL, bool) {
 }
 func TestShortenHandler(t *testing.T) {
 	target := "/shorten"
+
 	h := New(fakeURLService{})
 
 	tests := []struct {
@@ -207,8 +208,8 @@ func TestReadyHandler(t *testing.T) {
 
 type fakeNotFoundURLService struct{}
 
-func (s fakeNotFoundURLService) Shorten(originalURL string) model.URL {
-	return model.URL{}
+func (s fakeNotFoundURLService) Shorten(originalURL string) (model.URL, error) {
+	return model.URL{}, nil
 }
 
 func (s fakeNotFoundURLService) Resolve(code string) (model.URL, bool) {

@@ -16,9 +16,10 @@ type fakeRepository struct {
 	findFound        bool
 }
 
-func (f *fakeRepository) SaveURL(url model.URL) {
+func (f *fakeRepository) SaveURL(url model.URL) error {
 	f.saveCalled = true
 	f.savedURL = url
+	return nil
 }
 
 func (f *fakeRepository) FindByCode(code string) (model.URL, bool) {
@@ -71,7 +72,7 @@ func TestShortenerService_Shorten(t *testing.T) {
 	s := ShortenerService{
 		URLRepo: &f,
 	}
-	result := s.Shorten(originalURL)
+	result, _ := s.Shorten(originalURL)
 
 	assert.Equal(t, originalURL, result.OriginalURL)
 	assert.NotEmpty(t, result.ShortCode)

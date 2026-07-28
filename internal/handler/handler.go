@@ -58,7 +58,11 @@ func (h Handler) ShortenHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	urlModel := h.URLService.Shorten(urlString)
+	urlModel, err := h.URLService.Shorten(urlString)
+	if err != nil {
+		writeJSON(w, http.StatusInternalServerError, errorResponse{Error: "internal server error"})
+		return
+	}
 	respBody := shortenResponse{
 		Message:  "Will shorten json",
 		URLModel: urlModel,

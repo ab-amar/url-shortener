@@ -10,7 +10,7 @@ import (
 )
 
 type URLService interface {
-	Shorten(originalURL string) model.URL
+	Shorten(originalURL string) (model.URL, error)
 	Resolve(code string) (model.URL, bool)
 }
 
@@ -18,7 +18,7 @@ type ShortenerService struct {
 	URLRepo repository.URLRepository
 }
 
-func (s ShortenerService) Shorten(originalURL string) model.URL {
+func (s ShortenerService) Shorten(originalURL string) (model.URL, error) {
 	hash := sha256.Sum256([]byte(originalURL))
 	hexString := hex.EncodeToString(hash[:])
 	shortenedURL := model.URL{
@@ -26,8 +26,11 @@ func (s ShortenerService) Shorten(originalURL string) model.URL {
 		ShortCode:   hexString[:8],
 		CreatedAt:   time.Now(),
 	}
-	s.URLRepo.SaveURL(shortenedURL)
-	return shortenedURL
+	err := s.URLRepo.SaveURL(shortenedURL)
+	if err != nil {
+		return model.URL{}, err
+	}
+	return shortenedURL, err
 }
 
 func (s ShortenerService) Resolve(code string) (model.URL, bool) {

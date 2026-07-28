@@ -18,9 +18,10 @@ func NewPostgresRepository(pool *pgxpool.Pool) PostgresRepository {
 	}
 }
 
-func (r *PostgresRepository) SaveURL(url model.URL) {
+func (r *PostgresRepository) SaveURL(url model.URL) error {
 	query := "INSERT INTO urls (short_code, original_url, created_at) VALUES ($1, $2, $3);"
-	r.Pool.Exec(context.Background(), query, url.ShortCode, url.OriginalURL, url.CreatedAt)
+	_, err := r.Pool.Exec(context.Background(), query, url.ShortCode, url.OriginalURL, url.CreatedAt)
+	return err
 }
 
 func (r *PostgresRepository) FindByCode(code string) (model.URL, bool) {
