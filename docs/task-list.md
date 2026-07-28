@@ -63,35 +63,40 @@
 58. Add expiration support for links
 59. Discuss TTL and expiry semantics
 60. Add analytics event model design
-61. Track redirect counts in memory first
-62. Discuss race conditions and concurrent access
-63. Protect in-memory state with `sync.RWMutex`
-64. Learn when mutexes are needed in Go
-65. Add background cleanup for expired links
-66. Discuss goroutines and lifecycle ownership
-67. Add graceful background worker shutdown
-68. Add integration tests for HTTP endpoints
-69. Add integration tests for repository behavior
-70. Introduce Docker for local development
-71. Add Docker Compose for app + Postgres
-72. Introduce Redis use cases before adding Redis
-73. Add a cache design discussion for redirect lookups
-74. Add Redis caching for hot short codes
-75. Discuss cache-aside and cache invalidation
-76. Add rate limiting design discussion
-77. Implement simple in-memory rate limiting
-78. Compare fixed window vs token bucket
-79. Add authentication discussion for admin-only endpoints
-80. Add an admin endpoint to inspect stored URLs
-81. Add pagination basics
-82. Add delete or disable short link capability
-83. Discuss soft delete vs hard delete
-84. Add observability discussion: logs, metrics, traces
-85. Add basic metrics endpoint or counters
-86. Discuss production deployment concerns
-87. Add GitHub Actions for formatting and tests
-88. Add linting after understanding what it catches
-89. Add API documentation
-90. Write a design doc for the project architecture
-91. Prepare interview talking points for each subsystem
-92. Review tradeoffs and decide what makes the final project resume-worthy
+61. Add PostgreSQL connection configuration
+62. Create a `pgxpool` connection pool in `main.go`
+63. Wire the app to use `PostgresRepository`
+64. Apply the initial migration to a local PostgreSQL instance
+65. Manually test shorten and redirect against a real PostgreSQL database
+66. Track redirect counts in memory first
+67. Discuss race conditions and concurrent access
+68. Protect in-memory state with `sync.RWMutex`
+69. Learn when mutexes are needed in Go
+70. Add background cleanup for expired links
+71. Discuss goroutines and lifecycle ownership
+72. Add graceful background worker shutdown
+73. Add integration tests for HTTP endpoints
+74. Add integration tests for repository behavior
+75. Introduce Docker for local development
+76. Add Docker Compose for app + Postgres
+77. Introduce Redis use cases before adding Redis
+78. Add a cache design discussion for redirect lookups
+79. Add Redis caching for hot short codes
+80. Discuss cache-aside and cache invalidation
+81. Add rate limiting design discussion
+82. Implement simple in-memory rate limiting
+83. Compare fixed window vs token bucket
+84. Add authentication discussion for admin-only endpoints
+85. Add an admin endpoint to inspect stored URLs
+86. Add pagination basics
+87. Add delete or disable short link capability
+88. Discuss soft delete vs hard delete
+89. Add observability discussion: logs, metrics, traces
+90. Add basic metrics endpoint or counters
+91. Discuss production deployment concerns
+92. Add GitHub Actions for formatting and tests
+93. Add linting after understanding what it catches
+94. Add API documentation
+95. Write a design doc for the project architecture
+96. Prepare interview talking points for each subsystem
+97. Review tradeoffs and decide what makes the final project resume-worthy
