@@ -6,7 +6,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - "5432:5432"
+      - "${DB_HOST_PORT:-5432}:5432"
 
   app:
     build: .
@@ -16,4 +16,4 @@ services:
       DATABASE_URL: postgres://postgres:postgres@db:5432/url_shortener?sslmode=disable
       PORT: "8080"
     ports:
-      - "8080:8080"
+      - "${APP_HOST_PORT:-8080}:8080"

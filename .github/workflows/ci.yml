@@ -59,11 +59,17 @@ jobs:
         run: docker compose build
 
       - name: Start Docker Compose database service
+        env:
+          DB_HOST_PORT: 5433
         run: docker compose up -d db
 
       - name: Show Docker Compose service status
+        env:
+          DB_HOST_PORT: 5433
         run: docker compose ps
 
       - name: Stop Docker Compose services
         if: always()
+        env:
+          DB_HOST_PORT: 5433
         run: docker compose down
