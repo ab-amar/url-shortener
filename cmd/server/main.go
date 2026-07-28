@@ -23,18 +23,19 @@ func main() {
 		panic(err)
 	}
 	port := conf.Port
-	var inMemoryRepository repository.URLRepository = &repository.InMemoryRepository{}
-	var shortenerService service.URLService = service.ShortenerService{
-		URLRepo: inMemoryRepository,
-	}
-	var h handler.Handler = handler.New(shortenerService)
-	server := createServer(port, h)
 	databaseURL := conf.DatabaseURL
 	pool, err := pgxpool.New(context.Background(), databaseURL)
 	if err != nil {
 		slog.Error("db failed", "error", err)
 		panic(err)
 	}
+	pgRepo := repository.NewPostgresRepository(pool)
+	var postgresRepository repository.URLRepository = &pgRepo
+	var shortenerService service.URLService = service.ShortenerService{
+		URLRepo: postgresRepository,
+	}
+	var h handler.Handler = handler.New(shortenerService)
+	server := createServer(port, h)
 	defer pool.Close()
 	slog.Info("server starting", "port", port)
 	go func() {

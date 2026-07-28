@@ -64,7 +64,7 @@ func (h Handler) ShortenHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	respBody := shortenResponse{
-		Message:  "Will shorten json",
+		Message:  "short URL created successfully",
 		URLModel: urlModel,
 	}
 	writeJSON(w, http.StatusOK, &respBody)
