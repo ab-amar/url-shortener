@@ -70,11 +70,11 @@
 68. Add GitHub Actions for formatting and tests
 69. Add API documentation
 70. Write a design doc for the project architecture
+71. Introduce Docker for local development
+72. Add Docker Compose for app + Postgres
 
 ................................................
 
-71. Introduce Docker for local development
-72. Add Docker Compose for app + Postgres
 73. Add observability discussion: logs, metrics, traces
 74. Add basic metrics endpoint or counters
 75. Introduce Redis use cases before adding Redis

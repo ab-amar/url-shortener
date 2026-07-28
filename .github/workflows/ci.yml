@@ -51,3 +51,19 @@ jobs:
 
       - name: Build Docker image
         run: docker build -t url-shortener .
+
+      - name: Validate Docker Compose file
+        run: docker compose config
+
+      - name: Build Docker Compose services
+        run: docker compose build
+
+      - name: Start Docker Compose database service
+        run: docker compose up -d db
+
+      - name: Show Docker Compose service status
+        run: docker compose ps
+
+      - name: Stop Docker Compose services
+        if: always()
+        run: docker compose down
