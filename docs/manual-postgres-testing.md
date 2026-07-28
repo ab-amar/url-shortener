@@ -98,7 +98,7 @@ Example:
 Run:
 
 ```bash
-psql url_shortener -c "SELECT short_code, original_url, created_at FROM urls;"
+psql url_shortener -c "SELECT short_code, original_url, created_at, updated_at, expires_at FROM urls;"
 ```
 
 What to check:
@@ -110,7 +110,7 @@ What to check:
 If you want to check one code only, run:
 
 ```bash
-psql url_shortener -c "SELECT short_code, original_url, created_at FROM urls WHERE short_code = 'abc12345';"
+psql url_shortener -c "SELECT short_code, original_url, created_at, updated_at, expires_at FROM urls WHERE short_code = 'abc12345';"
 ```
 
 Replace `abc12345` with your actual code.

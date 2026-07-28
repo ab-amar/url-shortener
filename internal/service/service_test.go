@@ -2,6 +2,7 @@ package service
 
 import (
 	"testing"
+	"time"
 
 	"github.com/ab-amar/url-shortener/internal/model"
 	"github.com/stretchr/testify/assert"
@@ -81,4 +82,26 @@ func TestShortenerService_Shorten(t *testing.T) {
 	assert.Equal(t, result.OriginalURL, f.savedURL.OriginalURL)
 	assert.Equal(t, result.ShortCode, f.savedURL.ShortCode)
 	assert.Equal(t, result.CreatedAt, f.savedURL.CreatedAt)
+	assert.Equal(t, result.UpdatedAt, f.savedURL.UpdatedAt)
+}
+
+func TestShortenerService_ResolveExpired(t *testing.T) {
+	code := "abcd1234"
+	expiredAt := time.Now().Add(-time.Minute)
+	f := fakeRepository{
+		findResult: model.URL{
+			OriginalURL: "https://example.com",
+			ShortCode:   code,
+			ExpiresAt:   &expiredAt,
+		},
+		findFound: true,
+	}
+	s := ShortenerService{
+		URLRepo: &f,
+	}
+
+	_, found := s.Resolve(code)
+
+	assert.True(t, f.findByCodeCalled)
+	assert.False(t, found)
 }

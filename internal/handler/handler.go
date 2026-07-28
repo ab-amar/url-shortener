@@ -28,7 +28,7 @@ type shortenRequest struct {
 
 type shortenResponse struct {
 	Message  string    `json:"message"`
-	URLModel model.URL `json:"urlModel"`
+	URLModel model.URL `json:"url_model"`
 }
 
 type errorResponse struct {

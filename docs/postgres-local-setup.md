@@ -130,19 +130,21 @@ What to check:
 
 - `url_shortener` appears in the database list
 
-## 8. Apply the initial migration
+## 8. Apply the migrations
 
 Run this from the project root:
 
 ```bash
 psql url_shortener -f migrations/000001_create_urls_table.up.sql
+psql url_shortener -f migrations/000002_add_url_metadata_columns.up.sql
 ```
 
 What this does:
 
 - connects to the `url_shortener` database
-- reads SQL from the migration file
+- reads SQL from the migration files
 - creates the initial schema
+- adds `updated_at` and `expires_at` to match the current Go model
 
 What to check:
 
@@ -292,6 +294,6 @@ Local PostgreSQL setup is complete when all of these are true:
 - `psql --version` works
 - PostgreSQL is running
 - `url_shortener` database exists
-- migration file has been applied
+- migration files have been applied
 - `urls` table exists
 - `DATABASE_URL` is set

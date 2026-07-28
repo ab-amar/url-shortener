@@ -19,19 +19,29 @@ func NewPostgresRepository(pool *pgxpool.Pool) PostgresRepository {
 }
 
 func (r *PostgresRepository) SaveURL(url model.URL) error {
-	query := "INSERT INTO urls (short_code, original_url, created_at) VALUES ($1, $2, $3);"
-	_, err := r.Pool.Exec(context.Background(), query, url.ShortCode, url.OriginalURL, url.CreatedAt)
+	query := "INSERT INTO urls (short_code, original_url, created_at, updated_at, expires_at) VALUES ($1, $2, $3, $4, $5);"
+	_, err := r.Pool.Exec(
+		context.Background(),
+		query,
+		url.ShortCode,
+		url.OriginalURL,
+		url.CreatedAt,
+		url.UpdatedAt,
+		url.ExpiresAt,
+	)
 	return err
 }
 
 func (r *PostgresRepository) FindByCode(code string) (model.URL, bool) {
-	query := "SELECT original_url, short_code, created_at FROM urls WHERE short_code = $1;"
+	query := "SELECT original_url, short_code, created_at, updated_at, expires_at FROM urls WHERE short_code = $1;"
 	row := r.Pool.QueryRow(context.Background(), query, code)
 	var url model.URL
 	err := row.Scan(
 		&url.OriginalURL,
 		&url.ShortCode,
 		&url.CreatedAt,
+		&url.UpdatedAt,
+		&url.ExpiresAt,
 	)
 
 	if err == pgx.ErrNoRows {

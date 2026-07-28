@@ -36,5 +36,12 @@ func (s ShortenerService) Shorten(originalURL string) (model.URL, error) {
 }
 
 func (s ShortenerService) Resolve(code string) (model.URL, bool) {
-	return s.URLRepo.FindByCode(code)
+	url, found := s.URLRepo.FindByCode(code)
+	if !found {
+		return model.URL{}, false
+	}
+	if url.ExpiresAt != nil && !url.ExpiresAt.After(time.Now()) {
+		return model.URL{}, false
+	}
+	return url, true
 }
