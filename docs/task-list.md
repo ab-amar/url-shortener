@@ -51,11 +51,11 @@
 49. Add persistent storage design discussion
 50. Introduce PostgreSQL concepts before implementation
 51. Design the first database schema for shortened URLs
+52. Discuss primary keys, unique constraints, and indexes
+53. Add SQL migrations strategy
 
 ................................................
 
-52. Discuss primary keys, unique constraints, and indexes
-53. Add SQL migrations strategy
 54. Add a PostgreSQL repository implementation
 55. Compare in-memory vs PostgreSQL repository behavior
 56. Handle duplicate short code conflicts safely
