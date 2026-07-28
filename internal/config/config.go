@@ -1,12 +1,14 @@
 package config
 
 import (
+	"errors"
 	"os"
 	"strconv"
 )
 
 type Config struct {
-	Port string
+	Port        string
+	DatabaseURL string
 }
 
 func NewConfig() (Config, error) {
@@ -18,9 +20,13 @@ func NewConfig() (Config, error) {
 	if err != nil {
 		return Config{}, err
 	}
-	
+	databaseURL := os.Getenv("DATABASE_URL")
+	if databaseURL == "" {
+		return Config{}, errors.New("database url is required")
+	}
+
 	return Config{
-		Port: port,
+		Port:        port,
+		DatabaseURL: databaseURL,
 	}, nil
 }
-
